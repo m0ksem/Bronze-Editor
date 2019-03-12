@@ -158,6 +158,10 @@
             </div>
           </div>
 
+          <div class="property file_text" v-if="selectedObject">
+            {{ fileText }}
+          </div>
+
         </div>
       </div>
     </div>
@@ -176,7 +180,8 @@ export default {
       selectedObject: null,
       objectSelected: false,
       selectedObjectName: '',
-      rotation: [0, 0, 0]
+      rotation: [0, 0, 0],
+      fileText: ''
     }
   },
   mounted () {
@@ -187,19 +192,51 @@ export default {
   },
   methods: {
     objectLoading (event) {
-      let files = event.target.files
-      for (let index = 0; index < files.length; index++) {
-        const file = files[index]
-        let reader = new FileReader()
-        let vue = this
-        reader.onload = (function (theFile) {
-          return function (e) {
-            vue.addObjectFromFile(reader.result, theFile.name)
-            vue.$data.selectedObjectName = theFile.name
-          }
-        })(file)
-        reader.readAsText(file)
+      // let files = event.target.files
+      // for (let index = 0; index < files.length; index++) {
+      //   const file = files[index]
+      //   let reader = new FileReader()
+      //   let vue = this
+      //   reader.onload = (function (theFile) {
+      //     return function (e) {
+      //       alert(reader.result)
+      //       vue.addObjectFromFile(reader.result, theFile.name)
+      //       vue.$data.selectedObjectName = theFile.name
+      //     }
+      //   })(file)
+      //   reader.readAsText(file)
+      // }
+      let file = event.target.files[0]
+      let CHUNK_SIZE = 1024
+      let offset = 0
+      let fr = new FileReader()
+      let text = ''
+      fr.onload = () => {
+        // console.log(fr.result)
+        text += fr.result
+        // \r or \n not found, continue seeking.
+        offset += CHUNK_SIZE
+        seek(text)
       }
+
+      let vue = this
+      let objLoaded = (text) => {
+        alert('Object loaded')
+        vue.addObjectFromFile(text, file.name)
+        vue.$data.selectedObjectName = file.name
+        vue.$data.fileText = text
+      }
+
+      let seek = (text) => {
+        if (offset >= file.size) {
+          objLoaded(text)
+          return
+        }
+        var slice = file.slice(offset, offset + CHUNK_SIZE)
+        fr.readAsText(slice)
+      }
+
+      seek(text)
     },
     textureLoading (event) {
       let files = event.target.files
@@ -248,7 +285,6 @@ export default {
       object.name = name
     },
     loadExampleObject () {
-      alert(DeerObj)
       let object = new Bronze.Object(this.$data.engine)
       object.setPosition(0, 0, 0)
       object.compile(DeerObj)
@@ -471,6 +507,15 @@ export default {
             margin: 2px 0 4px 0
             white-space: nowrap
             font-size: 0
+            &.file_text
+              overflow: scroll
+              max-height: 500px
+              height: 500px
+              width: 100%
+              max-width: 100%
+              font-size: 12px
+              color: rgba(255, 255, 255, 0.5)
+              font-family: 'Consolas'
             &.objects
               background: rgba(255, 255, 255, 0.05)
               border-radius: 5px

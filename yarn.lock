@@ -87,11 +87,6 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@m0ksem/bronze@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@m0ksem/bronze/-/bronze-0.0.1.tgz#22fa8bcc2c768a74aca180e0444c085d40911a58"
-  integrity sha512-SIMnbshhb41GlbKz1LQzQLnC3EWof3givU2kJyVDptHN6rnT4u5rZ30n3xEIlhN8e3pZnWQnEkz4Uh6mhFB/qw==
-
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
