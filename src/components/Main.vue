@@ -158,11 +158,25 @@
             </div>
           </div>
 
-          <div class="property file_text" v-if="selectedObject">
+          <!-- <div class="property file_text" v-if="selectedObject">
             {{ fileText }}
-          </div>
-
+          </div> -->
         </div>
+
+        <div class="group">
+          <label class="group_name">Save</label>
+          <div class="property property__button">
+            <div class="name">
+              Save file:
+            </div>
+            <div class="value">
+              <div class="button" v-on:click="saveObjects">
+                <span>Save object</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -401,6 +415,26 @@ export default {
             camera.rotate(controls.mouse.movement.y / 10, controls.mouse.movement.x / 10, 0)
           }
         }
+      })
+    },
+    saveObjects () {
+      let objects = this.$data.engine.objects
+      objects.forEach(object => {
+        let objectCode = ''
+        objectCode += 'let ' + object.name + ' = new Object(engine)\n'
+        objectCode += ' ' + object.name + '.setPosition(' + object.position[0] + ', ' +
+                                                            object.position[1] + ', ' +
+                                                            object.position[2] + ')\n'
+        objectCode += ' ' + object.name + '.setRotation(' + object.rotation[0] + ', ' +
+                                                            object.rotation[1] + ', ' +
+                                                            object.rotation[2] + ')\n'
+        objectCode += ' ' + object.name + '.scale('       + object.scaling[0] + ', ' +
+                                                            object.scaling[1] + ', ' +
+                                                            object.scaling[2] + ')\n'
+        if (object.texture != this.$data.engine.noTexture) {
+          objectCode += ' ' + object.name + '.setTexture(new Texture(' + object.texture.src + '))\n'                                                                                                        
+        }
+        objectCode += ' ' + object.name + '.loadFromObj(' + object.filePath + ')\n'
       })
     }
   },
