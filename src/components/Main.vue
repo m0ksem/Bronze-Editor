@@ -1,6 +1,74 @@
 <template>
   <div class="editor">
     <div class="top">
+      <ul>
+        <li>
+          <label>File</label>
+          <ul>
+            <label>Project</label>
+            <li>Save</li>
+            <li>Load project</li>
+            <label>Export</label>
+            <li>Export as JS</li>
+            <li>Export as JSON</li>
+          </ul>  
+        </li>
+        <li>
+          <label>Objects</label>
+          <ul>
+            <label>New Object</label>
+            <li><input type="file" id="files" name="files[]" multiple ref="files" accept=".obj" v-on:change="this.objectLoading"/>Load from file</li>
+            <li v-on:click="loadExampleObject">Load example</li>
+            <label>Simple geometry</label>
+            <li>Create Rect</li>
+            <li>Create Cube</li>
+          </ul>  
+        </li>
+        <li>
+          <label>Camera</label>
+          <ul>
+            <label>Set camera</label>
+            <li>
+              Set default camera <span class="arrow">></span>
+              <ul> 
+                <li v-on:click="setCameraMode('fps')">FPS camera</li>
+                <li v-on:click="setCameraMode('moba')">MOBA camera</li>
+                <li v-on:click="setCameraMode('top')">Top view camera</li>
+              </ul>
+            </li>
+            <li>Load camera from JSON</li>
+            <li>Create camera with JS</li>
+            <label>Settings</label>
+            <li>Camera settings</li>
+            <label>Controls</label>
+            <li>Change control function</li>
+            <li>
+              Set default contorls <span class="arrow">></span>
+              <ul> 
+                <li>Shooter controls</li>
+                <li>MOBA controls</li>
+                <li>Platformers controls</li>
+              </ul>
+            </li>
+          </ul>  
+        </li>
+        <li>
+          <label>Info</label>
+          <ul>
+            <label>Help</label>
+            <li>About</li>
+            <li>Help</li>
+            <li>Contact</li>
+            <label>Info</label>
+            <li><p>Editor version</p> <span class="right">0.0.001.3 dev</span></li>
+            <li><p>Engine version</p> <span class="right">0.0.002.51 dev</span></li>
+            <label>Update</label>
+            <li>Update Engine</li>
+            <li>Update Editor</li>
+          </ul>  
+        </li>
+
+      </ul>
     </div>
     <div class="mid">
       <div class="main">
@@ -8,40 +76,15 @@
       </div>
       <div class="menu">
         <div class="group">
-          <label class="group_name">Load object from file</label>
-          <div class="property property__button">
-            <div class="name">
-              Load from file.
-            </div>
-            <div class="value">
-              <div class="button">
-                <span>Choose from file</span>
-                <input type="file" id="files" name="files[]" multiple ref="files" v-on:change="this.objectLoading"/>
-              </div>
-            </div>
-          </div>
-          <div class="property property__button">
-            <div class="name">
-              Load example file:
-            </div>
-            <div class="value">
-              <div class="button" v-on:click="loadExampleObject">
-                <span>Load example</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="group">
           <label class="group_name">Objects</label>
+          <label class="tip" v-if="this.$data.engine.objects.length == 0">
+            There are no objects now
+          </label>
           <div v-for="object in engine.objects" v-on:click="objectSelect(object)" class="objects property property__button" :key="object.id">
             <div class="name">
-              Object name:
-            </div>
-            <div class="value">
               <span>{{ object.name }}</span>
-              <button v-on:click="deleteObject(object)" class="delete">X</button>
             </div>
+            <button v-on:click="deleteObject(object)" class="delete">X</button>
           </div>
         </div>
 
@@ -163,7 +206,7 @@
           </div> -->
         </div>
 
-        <div class="group">
+        <!-- <div class="group">
           <label class="group_name">Save</label>
           <div class="property property__button">
             <div class="name">
@@ -175,7 +218,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
 
       </div>
     </div>
@@ -206,36 +249,19 @@ export default {
   },
   methods: {
     objectLoading (event) {
-      // let files = event.target.files
-      // for (let index = 0; index < files.length; index++) {
-      //   const file = files[index]
-      //   let reader = new FileReader()
-      //   let vue = this
-      //   reader.onload = (function (theFile) {
-      //     return function (e) {
-      //       alert(reader.result)
-      //       vue.addObjectFromFile(reader.result, theFile.name)
-      //       vue.$data.selectedObjectName = theFile.name
-      //     }
-      //   })(file)
-      //   reader.readAsText(file)
-      // }
       let file = event.target.files[0]
       let CHUNK_SIZE = 1024
       let offset = 0
       let fr = new FileReader()
       let text = ''
       fr.onload = () => {
-        // console.log(fr.result)
         text += fr.result
-        // \r or \n not found, continue seeking.
         offset += CHUNK_SIZE
         seek(text)
       }
 
       let vue = this
       let objLoaded = (text) => {
-        alert('Object loaded')
         vue.addObjectFromFile(text, file.name)
         vue.$data.selectedObjectName = file.name
         vue.$data.fileText = text
@@ -302,9 +328,6 @@ export default {
       let object = new Bronze.Object(this.$data.engine)
       object.setPosition(0, 0, 0)
       object.compile(DeerObj)
-      // let obj = DeerObj
-      // console.log(DeerObj)
-      // console.log(obj.text)
       let name = 'Deer'
       let index = 1
       this.$data.engine.objects.forEach(o => {
@@ -354,10 +377,30 @@ export default {
     },
     setupCamera () {
       let camera = new Bronze.Camera(this.$data.engine)
-      camera.setPosition(0, 800, 1500)
-      camera.setRotation(-45, 0, 0)
+      camera.setPosition(0, 800, 1200)
       camera.setFieldOfView(90)
+      camera.setRotation(0, 0, 0)
       this.$data.engine.setCamera(camera)
+    },
+    setCameraMode (mode) {
+      let camera = this.$data.engine.camera
+      if (mode == 'fps') {
+        console.log("AAAAA")
+      }
+      switch (mode) {
+        case 'fps': 
+          camera.setRotation(0, 0, 0)
+          camera.setPosition(0, 800, 1500)
+          break
+        case 'moba':
+          camera.setRotation(-45, 0, 0)
+          camera.setPosition(0, 2000, 750)
+          break
+        case 'top':
+          camera.setRotation(-90, 0, 0)
+          camera.setPosition(0, 2500, 0)
+          break
+      }
     },
     setupControls () {
       let controls = new Bronze.Controls(this.$data.engine)
@@ -465,34 +508,123 @@ export default {
   .editor
     width: 100%
     height: 100%
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    position: relative
+    .top
+      height: 28px
+      line-height: 28px
+      background: rgba(0, 0, 0, 0.2)
+      width: 80%
+      text-align: left
+      color: white
+      padding: 0px 15px
+      li
+        position: relative
+        padding: 0 8px
+        box-sizing: border-box
+        color: rgba(255, 255, 255, 0.8)
+        cursor: pointer
+        white-space: nowrap
+        text-align: left
+        display: table
+        input
+          opacity: 0
+          position: absolute
+          top: 0
+          left: 0
+          width: 100%
+          height: 100%
+        label
+          cursor: pointer
+          display: table-cell
+        p
+          display: table-cell
+          margin: 0
+          padding: 0
+        span
+          color: rgba(255, 255, 255, 0.5) !important
+        .right
+          display: table-cell
+          width: 100%
+          text-align: right
+          padding-left: 8px
+        .arrow
+          float: right
+        &:hover
+          color: rgba(255, 255, 255, 1)
+      ul
+        list-style: none
+        padding: 0
+        margin: 0
+        & > li
+          display: inline-block
+          &:hover
+            background: rgba(0, 0, 0, 0.5)
+            & > ul
+              display: block
+          & > ul
+            position: absolute
+            line-height: 22px
+            font-weight: 100
+            top: 100%
+            left: 0
+            z-index: 1000000
+            background: rgba(0, 0, 0, 0.5)
+            display: none
+            padding: 0 0 8px 0
+            label
+              display: block
+              padding: 8px 8px 0 8px
+              color: rgba(255, 255, 255, 0.5)
+              font-weight: 100
+            & > li
+              cursor: pointer
+              display: block
+              position: relative
+              &:hover
+                background: none
+              & > ul
+                position: absolute
+                left: 100%
+                top: -8px
+                padding: 8px
+                & > li
     .mid
       white-space: nowrap
       font-size: 0
       height: 100%
+      width: 100%
+      text-align: left
       .main
         position: relative
         width: 80%
         height: 100%
         display: inline-block
         box-sizing: border-box
-        padding: 30px
+        padding: 25px 15px
         canvas
           width: 100%
           height: 100%
-          background: #f4f4e6
+          background: #1e1e1d
           box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2)
       .menu
+        position: absolute
+        top: 0
+        right: 0
         display: inline-block
         vertical-align: top
         overflow-y: auto
         overflow-x: hidden
         width: 20%
         height: 100%
+        max-height: 100%
         font-size: 14px
         text-align: left
         padding: 0 10px
         box-sizing: border-box
-        background: #1c1c1c
+        background: #161615
         box-shadow: 0 8px 17px 2px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2)
         .group
           margin-top: 10px
@@ -501,6 +633,11 @@ export default {
           border-style: dashed
           box-sizing: border-box
           color: #f4f4e6
+          .tip
+            color: rgba(255, 255, 255, 0.5)
+            text-align: center
+            width: 100%
+            display: block
           .group_name
             display: block
             font-size: 18px
@@ -553,6 +690,9 @@ export default {
             &.objects
               background: rgba(255, 255, 255, 0.05)
               border-radius: 5px
+              cursor: pointer
+              span
+                cursor: text
               button.delete
                 background: rgba(0, 0, 0, 0.2)
                 color: rgba(244, 244, 230, 0.5)
@@ -564,6 +704,7 @@ export default {
                 width: 22px
                 margin-left: 5px
                 padding: 0 0 0 0.7px
+                float: right
             .input
               display: table
               z-index: 999
@@ -601,7 +742,7 @@ export default {
               vertical-align: top
               font-size: 14px
             .name
-              font-weight: 600
+              font-weight: 500
             .value
               text-align: right
               .button
