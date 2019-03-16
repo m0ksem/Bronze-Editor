@@ -15,11 +15,12 @@ const env = require('../config/prod.env')
 
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
-    rules: utils.styleLoaders({
-      sourceMap: config.build.productionSourceMap,
-      extract: true,
-      usePostCSS: true
-    })
+    rules: [
+      {
+        test: /\.obj$/i,
+        use: 'raw-loader',
+      },
+    ]
   },
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {

@@ -2,8 +2,8 @@ module.exports = {
     module: {
       rules: [
         {
-          test: /\.txt$/i,
-          use: 'raw-loader',
+          test: /\.obj$/i,
+          loader: 'raw-loader',
         },
       ],
     },
