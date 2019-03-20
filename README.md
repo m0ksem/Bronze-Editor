@@ -1,8 +1,12 @@
-# bronze-editor
+<h1 align="center"> Bronze-Editor 🧱</h1>
 
-> Editor for Bronze Game Engine
+<h4 align="center">Editor for <a href="https://github.com/m0ksem/Bronze-Engine/"><b>Bronze Engine</b></a>  </h4>
 
-## Build Setup
+<div style="text-align:center" align="center">
+ <a href="http://m0ksem.design/Bronze-Editor/#/"><b>Deployment</b></a> -
+</div>
+
+## Development
 
 ``` bash
 # install dependencies
@@ -17,5 +21,3 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
