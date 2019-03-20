@@ -3,7 +3,7 @@
 <h4 align="center">Editor for <a href="https://github.com/m0ksem/Bronze-Engine/"><b>Bronze Engine</b></a>  </h4>
 
 <div style="text-align:center" align="center">
- <a href="http://m0ksem.design/Bronze-Editor/#/"><b>Deployment</b></a> -
+ <a href="http://m0ksem.design/Bronze-Editor/#/"><b>Deployment</b></a>
 </div>
 
 ## Development
