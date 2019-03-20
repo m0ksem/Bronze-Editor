@@ -6,6 +6,10 @@
  <a href="http://m0ksem.design/Bronze-Editor/#/"><b>Deployment</b></a>
 </div>
 
+## Example  
+
+![](/example.gif)
+
 ## Development
 
 ``` bash
