@@ -73,6 +73,7 @@
 <script>
 import DeerObj from '@/assets/deer.obj'
 import * as Bronze from '@m0ksem/bronze'
+import $s from './store';
 
 export default {
   name: 'Menu',
@@ -80,6 +81,9 @@ export default {
     return {
       engine: this.$parent.engine
     }
+  },
+  computed: {
+    $s: () => $s,
   },
   methods: {
     setCameraMode (mode) {
@@ -99,73 +103,11 @@ export default {
           break
       }
     },
-    deleteObject (object) {
-      setTimeout(() => {
-        let objectIndex = this.$parent.engine.objects.indexOf(object)
-        this.$parent.engine.objects.splice(objectIndex, 1)
-        if (this.$parent.engine.objects.length === 0) {
-          this.objectSelect(null)
-        } else {
-          this.objectSelect(this.$parent.engine.objects[this.$parent.engine.objects.length - 1])
-        }
-      }, 100)
-    },
     addObjectFromFile (objectText, filePath) {
-      let object = new Bronze.Object(this.$parent.engine)
-      object.setPosition(0, 0, 0)
-      object.compile(objectText)
-      object.filePath = filePath
-      let name = filePath.replace('.obj', '')
-      name = name.charAt(0).toUpperCase() + name.slice(1)
-      let index = 1
-      this.$parent.engine.objects.forEach(o => {
-        if (!(o === object) && (o.name === name)) {
-          let objectsCount = parseInt(o.name.charAt(name.length - 1))
-          if (isNaN(objectsCount)) {
-            objectsCount = 1
-          }
-          o.name = o.name + (objectsCount)
-          name = name + (objectsCount + 1)
-        }
-        if (!(o === object) && (o.name === name + index)) {
-          index += 1
-        }
-        if (!(o === object) && (o.name === name + 1)) {
-          index += 1
-        }
-      })
-      if (index !== 1) {
-        name = name + index
-      }
-      object.name = name
+      this.$s.objectsManager.addObject(objectText, filePath);
     },
     loadExampleObject () {
-      console.log(this)
-      let object = new Bronze.Object(this.$parent.engine)
-      object.setPosition(0, 0, 0)
-      object.compile(DeerObj)
-      let name = 'Deer'
-      let index = 1
-      this.$parent.engine.objects.forEach(o => {
-        if (!(o === object) && (o.name === name)) {
-          let objectsCount = parseInt(o.name.charAt(name.length - 1))
-          if (isNaN(objectsCount)) {
-            objectsCount = 1
-          }
-          o.name = o.name + (objectsCount)
-          name = name + (objectsCount + 1)
-        }
-        if (!(o === object) && (o.name === name + index)) {
-          index += 1
-        }
-        if (!(o === object) && (o.name === name + 1)) {
-          index += 1
-        }
-      })
-      if (index !== 1) {
-        name = name + index
-      }
-      object.name = name
+      this.$s.objectsManager.addObject(DeerObj, 'Deer');
     },
     objectLoading (event) {
       let file = event.target.files[0]
@@ -197,27 +139,6 @@ export default {
 
       seek(text)
     },
-    saveObjects () {
-      let objects = this.$parent.engine.objects
-      objects.forEach(object => {
-        let objectCode = ''
-        objectCode += 'let ' + object.name + ' = new Object(engine)\n'
-        objectCode += ' ' + object.name + '.setPosition(' + object.position[0] + ', ' +
-                                                            object.position[1] + ', ' +
-                                                            object.position[2] + ')\n'
-        objectCode += ' ' + object.name + '.setRotation(' + object.rotation[0] + ', ' +
-                                                            object.rotation[1] + ', ' +
-                                                            object.rotation[2] + ')\n'
-        objectCode += ' ' + object.name + '.scale(' + object.scaling[0] + ', ' +
-                                                      object.scaling[1] + ', ' +
-                                                      object.scaling[2] + ')\n'
-        if (object.texture !== this.$parent.engine.noTexture) {
-          objectCode += ' ' + object.name + '.setTexture(new Texture(' + object.texture.src + '))\n'
-        }
-        objectCode += ' ' + object.name + '.loadFromObj(' + object.filePath + ')\n'
-        alert(objectCode)
-      })
-    }
   }
 }
 </script>
